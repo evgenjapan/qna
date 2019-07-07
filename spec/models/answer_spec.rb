@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe Question, type: :model do
+RSpec.describe Answer, type: :model do
   describe 'relations' do
-    it { should have_many :answers }
+    it { should belong_to :question }
   end
 
   describe 'validations' do
