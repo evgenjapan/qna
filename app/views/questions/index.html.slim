@@ -1,0 +1,11 @@
+p= link_to 'Ask question', new_question_path
+h2 Questions
+ul
+  - questions.each do |question|
+    li.question
+      h3
+        = question.title
+      div
+        = question.body
+      p
+        = link_to 'Details', question_path(question)
