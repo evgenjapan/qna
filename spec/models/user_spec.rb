@@ -14,27 +14,18 @@ RSpec.describe User, type: :model do
   describe 'author_of?' do
     let(:author) { create(:user) }
     let(:user) { create(:user) }
-    let(:question) { create(:question, user: author) }
-    let(:answer) { create(:answer, question: question, user: author) }
+    let(:instance) { create(:question, user: author) }
 
-    it 'Return true if user equals to question.user' do
-      expect(author.author_of?(question)).to be_truthy
+    it 'Return true if user equals to instance.user' do
+      expect(author).to be_author_of(instance)
     end
 
-    it 'Return true if user equals to answer.user' do
-      expect(author.author_of?(answer)).to be_truthy
+    it 'Return false if user not equals to instance.user' do
+      expect(user).to_not be_author_of(instance)
     end
 
-    it 'Return false if user not equals to question.user' do
-      expect(user.author_of?(question)).to be_falsey
-    end
-
-    it 'Return false if user not equals to answer.user' do
-      expect(user.author_of?(answer)).to be_falsey
-    end
-
-    it 'Return nil if instance has no user attribute' do
-      expect(user.author_of?(author)).to eq nil
+    it 'Return false if instance has no user attribute' do
+      expect(user).to_not  be_author_of(Object.new)
     end
   end
 end

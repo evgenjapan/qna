@@ -13,15 +13,15 @@ feature 'User can create answers for question', %q{
     end
 
     scenario 'creates answer' do
-      fill_in 'Body', with: 'Answer for a question'
-      click_on 'Answer a question'
+      fill_in 'Body', with: 'test answer 123'
+      click_on 'Create answer'
 
       expect(page).to have_content 'Successfully created.'
-      expect(page).to have_content 'Answer for a question'
+      expect(page).to have_content 'test answer 123'
     end
 
     scenario 'creates answer with errors' do
-      click_on 'Answer a question'
+      click_on 'Create answer'
 
       expect(page).to have_content "Body can't be blank"
     end
@@ -30,7 +30,7 @@ feature 'User can create answers for question', %q{
   scenario 'Unauthenticated user tris to create answer' do
     visit question_path(question)
 
-    click_on 'Answer a question'
+    click_on 'Create answer'
 
     expect(page).to have_content 'You need to sign in or sign up before continuing.'
   end

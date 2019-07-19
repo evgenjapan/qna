@@ -6,7 +6,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   def author_of?(instance)
-    instance.user.id == self.id if instance.respond_to?('user')
+    instance.try(:user_id).equal?(self.id)
   end
 
 end

@@ -5,11 +5,20 @@ feature 'User can sign out', %q{
   User would like to sign out
 } do
 
-  scenario 'User tries to sign out' do #By default unauthorized user see the same message as authorized
+  given(:user) { create(:user) }
+
+  scenario 'Authenticated user tries to sign out' do
+    sign_in(user)
     visit '/'
     click_on 'Log out'
 
     expect(page).to have_content 'Signed out successfully.'
+  end
+
+  scenario 'Unauthenticated user tries to sign out' do
+    visit '/'
+
+    expect(page).to_not have_link 'Log out'
   end
 
 end
