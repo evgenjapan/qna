@@ -5,11 +5,12 @@ class AnswersController < ApplicationController
 
   def create
     answer.user = current_user
-    if answer.save
-      redirect_to question_path(answer.question), notice: 'Successfully created.'
-    else
-      render 'questions/show'
-    end
+    answer.save  # decent exposure gem already done answer.new
+  end
+
+  def update
+    answer.update(answer_params)
+    @question = answer.question
   end
 
   def destroy
