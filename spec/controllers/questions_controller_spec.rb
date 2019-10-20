@@ -33,43 +33,56 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'PATCH #update' do
-    context 'with valid attributes' do
-      it 'changes the question attributes' do
-        patch :update, params: { id: question, question: { title: 'new title', body: 'new body' } }
-        question.reload
+    context 'Authenticated user' do
+      context 'with valid attributes' do
+        it 'changes the question attributes' do
+          patch :update, params: { id: question, question: { title: 'new title', body: 'new body' }, format: :js  }
+          question.reload
 
-        expect(question.title).to eq 'new title'
-        expect(question.body).to eq 'new body'
+          expect(question.title).to eq 'new title'
+          expect(question.body).to eq 'new body'
+        end
+
+        it 'redirects to updated question' do
+          patch :update, params: { id: question, question: attributes_for(:question), format: :js }
+
+          expect(response).to render_template :update
+        end
       end
 
-      it 'redirects to updated question' do
-        patch :update, params: { id: question, question: attributes_for(:question) }
+      context 'with invalid attributes' do
+        before { patch :update, params: { id: question, question: attributes_for(:question, :invalid), format: :js } }
 
-        expect(response).to redirect_to assigns(:exposed_question)
-      end
-    end
+        it 'does not change question' do
+          title = question.title
+          body = question.body
+          question.reload
 
-    context 'with invalid attributes' do
-      before { patch :update, params: { id: question, question: attributes_for(:question, :invalid) } }
+          expect(question.title).to eq title
+          expect(question.body).to eq body
+        end
 
-      it 'does not change question' do
-        title = question.title
-        body = question.body
-        question.reload
-
-        expect(question.title).to eq title
-        expect(question.body).to eq body
+        it 're-renders edit view' do
+          expect(response).to render_template :update
+        end
       end
 
-      it 're-renders edit view' do
-        expect(response).to render_template :edit
+      context 'trying to edit another user question' do
+        let!(:question) { create(:question, user: create(:user)) }
+        before { patch :update, params: { id: question, question: attributes_for(:question), format: :js } }
+        it 'does not change question' do
+          title = question.title
+          body = question.body
+          question.reload
+
+          expect(question.title).to eq title
+          expect(question.body).to eq body
+        end
       end
     end
   end
 
   describe 'DELETE #destroy' do
-    before { login(user) }
-
     context 'User tries to delete his question' do
       let!(:users_question) { create(:question, user: user) }
 

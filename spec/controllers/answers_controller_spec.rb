@@ -70,32 +70,46 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'PATCH #update' do
-    let!(:answer) { create(:answer, question: question) }
+    let!(:answer) { create(:answer, question: question, user: user) }
+    context 'Authenticated user' do
+      before { login(user) }
 
-    context 'with valid attributes' do
-      it 'changes answer attributes' do
-        patch :update, params: { id: answer, answer: { body: 'edited body' }, format: :js }
-        answer.reload
-        expect(answer.body).to eq 'edited body'
+      context 'with valid attributes' do
+        it 'changes answer attributes' do
+          patch :update, params: { id: answer, answer: { body: 'edited body' }, format: :js }
+          answer.reload
+          expect(answer.body).to eq 'edited body'
+        end
+
+        it 'renders update view' do
+          patch :update, params: { id: answer, answer: { body: 'edited body' }, format: :js }
+          expect(response).to render_template :update
+        end
       end
 
-      it 'renders update view' do
-        patch :update, params: { id: answer, answer: { body: 'edited body' }, format: :js }
-        expect(response).to render_template :update
-      end
-    end
+      context 'with invalid attributes' do
+        it 'does not change answer attributes' do
+          expect do
+            patch :update, params: { id: answer, answer: attributes_for(:answer, :invalid), format: :js }
+          end.to_not change(answer, :body)
+        end
 
-    context 'with invalid attributes' do
-      it 'does not change answer attributes' do
-        expect do
+        it 'renders update view' do
           patch :update, params: { id: answer, answer: attributes_for(:answer, :invalid), format: :js }
-        end.to_not change(answer, :body)
+          expect(response).to render_template :update
+        end
       end
 
-      it 'renders update view' do
-        patch :update, params: { id: answer, answer: attributes_for(:answer, :invalid), format: :js }
-        expect(response).to render_template :update
+      context 'trying to edit another user answer' do
+        let!(:answer) { create(:answer, question: question, user: create(:user)) }
+
+        it 'does not changes answer attributes' do
+          patch :update, params: { id: answer, answer: { body: 'edited body' }, format: :js }
+          answer.reload
+          expect(answer.body).to_not eq 'edited body'
+        end
       end
     end
+
   end
 end
