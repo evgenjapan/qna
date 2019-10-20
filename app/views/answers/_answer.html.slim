@@ -1,5 +1,7 @@
 li.answer id="answer_#{answer.id}"
   div= answer.body
+  -if current_user&.author_of?(answer.question) && !answer.best?
+    p = link_to 'Select as best', best_answer_path(answer), method: :post, remote: true
   - if current_user&.author_of?(answer)
     = link_to 'Delete answer', answer, remote: true, method: :delete
     = link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
