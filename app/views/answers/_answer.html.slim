@@ -1,7 +1,7 @@
-li.answer
+li.answer id="answer_#{answer.id}"
   div= answer.body
   - if current_user&.author_of?(answer)
-    = link_to 'Delete answer', answer_path(answer), method: :delete
+    = link_to 'Delete answer', answer, remote: true, method: :delete
     = link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
 
     = form_with class: 'hidden', html: { id: "edit-answer-#{answer.id}" }, model: answer do |f|

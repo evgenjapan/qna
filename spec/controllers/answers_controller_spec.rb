@@ -43,13 +43,13 @@ RSpec.describe AnswersController, type: :controller do
       let!(:users_answer) { create(:answer, question: question, user: user) }
 
       it 'deletes the answer' do
-        expect { delete :destroy, params: { id: users_answer } }.to change(Answer, :count).by(-1)
+        expect { delete :destroy, params: { id: users_answer }, format: :js }.to change(Answer, :count).by(-1)
       end
 
       it 'redirects to question show view' do
-        delete :destroy, params: { id: users_answer }
+        delete :destroy, params: { id: users_answer, format: :js }
 
-        expect(response).to redirect_to question_path(question)
+        expect(response).to render_template :destroy
       end
     end
 
@@ -58,13 +58,13 @@ RSpec.describe AnswersController, type: :controller do
       let!(:answer) { create(:answer, question: question, user: another_user) }
 
       it 'does not delete answer' do
-        expect { delete :destroy, params: { id: answer } }.to_not change(Answer, :count)
+        expect { delete :destroy, params: { id: answer, format: :js } }.to_not change(Answer, :count)
       end
 
       it 'redirects to question show view' do
-        delete :destroy, params: { id: answer }
+        delete :destroy, params: { id: answer, format: :js }
 
-        expect(response).to redirect_to question_path(question)
+        expect(response).to render_template :destroy
       end
     end
   end

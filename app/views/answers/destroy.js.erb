@@ -1,0 +1,4 @@
+<% unless answer.persisted? %>
+$('#answer_<%= answer.id %>').remove()
+$('.notice').html('<span id="message">Your answer succesfully deleted.</span>')
+<% end %>
