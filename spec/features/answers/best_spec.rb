@@ -8,10 +8,26 @@ feature 'The author of the question can select one answer as best', %q(
   given!(:user) { create(:user) }
   given!(:second_user) { create(:user) }
   given!(:question) { create(:question, user: user) }
-  given!(:other_question) { create(:question, user: create(:user)) }
   given!(:answers) { create_list(:answer, 2, question: question, user: create(:user)) }
 
+  describe "Any user", js: true do
+    given!(:best_answer) { create(:answer, :best, question: question) }
+
+    before do
+      visit(question_path(question))
+    end
+
+    scenario 'sees best answer first' do
+      within "#answer_#{question.answers.first.id}" do
+        expect(page).to have_content question.answers.where(best: true).first.body
+        expect(page).to_not have_link 'Select as best'
+      end
+    end
+  end
+
   describe 'Authenticated user', js: true do
+    given!(:other_question) { create(:question, user: create(:user)) }
+
     before do
       sign_in(user)
       visit(question_path(question))
