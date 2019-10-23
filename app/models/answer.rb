@@ -7,7 +7,7 @@ class Answer < ApplicationRecord
   default_scope { order(best: :desc) }
 
   def best!
-    Answer.transaction do
+    transaction do
       question.answers.where(best: true).update_all(best: false)
       update!(best: true)
     end

@@ -26,7 +26,10 @@ RSpec.describe AnswersController, type: :controller do
 
       context 'with invalid attributes' do
         it 'does not save the answer' do
-          expect { post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid) }, format: :js }.to_not change(Answer, :count)
+          expect do
+            post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid) }, format: :js
+            to_not change(Answer, :count)
+          end
         end
 
         it 'renders create view' do
@@ -127,7 +130,9 @@ RSpec.describe AnswersController, type: :controller do
         it 'does not change answer attributes' do
           expect do
             patch :update, params: { id: answer, answer: attributes_for(:answer, :invalid), format: :js }
-          end.to_not change(answer, :body)
+            answer.reload
+            to_not change(answer, :body)
+          end
         end
 
         it 'renders update view' do
@@ -151,7 +156,9 @@ RSpec.describe AnswersController, type: :controller do
       it 'does not change answer attributes' do
         expect do
           patch :update, params: { id: answer, answer: attributes_for(:answer), format: :js }
-        end.to_not change(answer, :body)
+          answer.reload
+          to_not change(answer, :body)
+        end
       end
 
       it 'returns 401 Unauthorized' do

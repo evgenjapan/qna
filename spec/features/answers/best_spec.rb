@@ -12,14 +12,15 @@ feature 'The author of the question can select one answer as best', %q(
 
   describe "Any user", js: true do
     given!(:best_answer) { create(:answer, :best, question: question) }
+    given!(:first_answer) { question.answers.first }
 
     before do
       visit(question_path(question))
     end
 
     scenario 'sees best answer first' do
-      within "#answer_#{question.answers.first.id}" do
-        expect(page).to have_content question.answers.where(best: true).first.body
+      within "#answer_#{first_answer.id}" do
+        expect(page).to have_content best_answer.body
         expect(page).to_not have_link 'Select as best'
       end
     end
