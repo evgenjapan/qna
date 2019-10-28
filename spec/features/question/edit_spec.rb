@@ -37,6 +37,41 @@ feature 'User can edit his question', %q{
       end
     end
 
+    scenario 'add an attachment when editing his question', js: true do
+      click_on 'Edit question'
+      within '.question' do
+        attach_file 'File', [
+            "#{Rails.root}/spec/rails_helper.rb",
+            "#{Rails.root}/spec/spec_helper.rb"
+        ]
+
+        click_on 'Save'
+
+        expect(page).to have_link 'rails_helper'
+        expect(page).to have_link 'spec_helper'
+      end
+    end
+
+    scenario 'add an attachment without replacing already attached files', js: true do
+      click_on 'Edit question'
+      within '.question' do
+        attach_file 'File', "#{Rails.root}/spec/rails_helper.rb"
+
+        click_on 'Save'
+
+        expect(page).to have_link 'rails_helper'
+
+        click_on 'Edit question'
+
+        attach_file 'File', "#{Rails.root}/spec/spec_helper.rb"
+
+        click_on 'Save'
+
+        expect(page).to have_link 'spec_helper'
+        expect(page).to have_link 'rails_helper'
+      end
+    end
+
     scenario 'edits his question with errors', js: true do
       click_on 'Edit question'
 
