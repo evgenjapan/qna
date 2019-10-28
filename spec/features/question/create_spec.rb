@@ -43,6 +43,7 @@ feature 'User can create question', %q{
       click_on 'Ask'
 
       expect(page).to have_link 'rails_helper'
+      expect(page).to have_link 'spec_helper'
     end
   end
 
