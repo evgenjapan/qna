@@ -1,6 +1,7 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, except: %w(index show)
   expose :questions, ->{ Question.all }
+  expose :question, -> { Question.with_attached_files.find(param[:id]) }
   expose :question, build: -> (question_params){ current_user.questions.new(question_params) }
   expose :answer, ->{question.answers.new}
 
@@ -28,6 +29,6 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:title, :body)
+    params.require(:question).permit(:title, :body, files: [])
   end
 end
