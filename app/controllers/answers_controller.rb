@@ -5,22 +5,21 @@ class AnswersController < ApplicationController
 
   def create
     answer.user = current_user
-    if answer.save
-      redirect_to question_path(answer.question), notice: 'Successfully created.'
-    else
-      render 'questions/show'
-    end
+    answer.save  # decent exposure gem already done answer.new
+  end
+
+  def update
+    answer.update(answer_params)  if current_user&.author_of?(answer)
+    @question = answer.question
   end
 
   def destroy
-    if current_user.author_of?(answer)
-      answer.destroy
-      message = { notice: 'Your answer succesfully deleted.' }
-    else
-      message = { alert: 'You are not the author of this answer.' }
-    end
+    answer.destroy if current_user.author_of?(answer)
+  end
 
-    redirect_to answer.question, message
+  def best
+    @question = answer.question
+    answer.best! if current_user.author_of?(@question)
   end
 
   private
