@@ -8,6 +8,7 @@ feature 'User can edit his answer', %q{
   given!(:user) { create(:user) }
   given!(:question) { create(:question) }
   given!(:answer) { create(:answer, question: question, user: user) }
+  given!(:file) { fixture_file_upload("#{Rails.root}/spec/rails_helper.rb", 'text/plain') }
   given!(:another_users_answer) { create(:answer, question: question, user: create(:user)) }
 
   scenario 'Unauthenticated user can not edit answer' do
@@ -54,6 +55,13 @@ feature 'User can edit his answer', %q{
         expect(page).to have_link 'spec_helper'
       end
 
+      scenario 'deletes attachment', js: true do
+        within '.answers' do
+          first('.attachment').click_on 'Delete file'
+          expect(page).to_not have_link 'rails_helper.rb'
+          expect(page).to have_link 'spec_helper.rb'
+        end
+      end
     end
 
     scenario 'edits his answer with errors', js: true do
@@ -71,6 +79,12 @@ feature 'User can edit his answer', %q{
     scenario 'tries to edit other users answers' do
       within "#answer_#{another_users_answer.id}" do
         expect(page).to_not have_link("Edit answer")
+      end
+    end
+
+    scenario 'tries to delete attachment for other users answers' do
+      within "#answer_#{another_users_answer.id}" do
+        expect(page).to_not have_link("Delete file")
       end
     end
   end

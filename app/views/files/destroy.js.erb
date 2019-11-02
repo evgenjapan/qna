@@ -1,0 +1,3 @@
+<% unless file.persisted? %>
+$('#attachment-<%= file.id %>').remove()
+<% end %>
