@@ -7,10 +7,10 @@ li.answer id="answer_#{answer.id}"
   - if current_user&.author_of?(answer)
     = link_to 'Delete answer', answer, remote: true, method: :delete
     = link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
-    p.answer-errors
+    p.answer-edit-errors
     = form_with class: 'hidden', html: { id: "edit-answer-#{answer.id}" }, model: answer do |f|
       = f.label :body, "Your answer"
       = f.text_area :body
       = f.label :files
-      = f.file_field :files, multiple: true
+      = f.file_field :files, multiple: true, direct_upload: true
       = f.submit 'Save'
