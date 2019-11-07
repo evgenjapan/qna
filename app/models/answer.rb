@@ -1,4 +1,6 @@
 class Answer < ApplicationRecord
+  include ::FileConcern
+
   belongs_to :question
   belongs_to :user
 

@@ -7,7 +7,6 @@ feature 'User can edit his question', %q{
 } do
   given!(:user) { create(:user) }
   given!(:question) { create(:question, user: user) }
-  given!(:seconds_user_question) { create(:question, user: create(:user)) }
 
   scenario 'Unauthenticated user can not edit question' do
     visit question_path(question)
@@ -37,6 +36,33 @@ feature 'User can edit his question', %q{
       end
     end
 
+    context 'attachments' do
+      background do
+        click_on 'Edit question'
+        within '.question' do
+          attach_file 'File', [
+              "#{Rails.root}/spec/rails_helper.rb",
+              "#{Rails.root}/spec/spec_helper.rb"
+          ]
+
+          click_on 'Save'
+        end
+      end
+
+      scenario 'add an attachment when editing his question', js: true do
+        expect(page).to have_link 'rails_helper'
+        expect(page).to have_link 'spec_helper'
+      end
+
+      scenario 'deletes attachment', js: true do
+        within ".question" do
+          first('.attachment').click_on 'Delete file'
+          expect(page).to_not have_link 'rails_helper.rb'
+          expect(page).to have_link 'spec_helper.rb'
+        end
+      end
+    end
+
     scenario 'edits his question with errors', js: true do
       click_on 'Edit question'
 
@@ -47,10 +73,21 @@ feature 'User can edit his question', %q{
       expect(page).to have_content("Body can't be blank")
     end
 
-    scenario 'tries to edit other users question' do
-      visit question_path(seconds_user_question)
+    context 'another user question' do
+      given!(:file) { fixture_file_upload("#{Rails.root}/spec/rails_helper.rb", 'text/plain') }
+      given!(:seconds_user_question) { create(:question, user: create(:user), files: [file]) }
 
-      expect(page).to_not have_link('Edit question')
+      background do
+        visit question_path(seconds_user_question)
+      end
+
+      scenario 'tries to edit' do
+        expect(page).to_not have_link('Edit question')
+      end
+
+      scenario 'tries to delete attachment' do
+        expect(page).to_not have_link('Delete file')
+      end
     end
   end
 end

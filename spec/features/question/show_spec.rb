@@ -8,7 +8,7 @@ feature 'User can view question and create answers for it', %q{
   given(:question) { create(:question, user: user) }
   given!(:answers) { create_list(:answer, 5, question: question, user: user) }
 
-  scenario 'User tries to view answers for question' do
+  scenario 'User tries to view question and answers for it' do
     visit question_path(question)
 
     expect(page).to have_content question.title

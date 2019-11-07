@@ -10,4 +10,5 @@ ul.answers
     = render 'shared/errors', resource: answer
   = f.label :body
   = f.text_area :body
+  = render partial: "files/multiple_file_field", locals: { f: f }
   = f.submit 'Create answer'

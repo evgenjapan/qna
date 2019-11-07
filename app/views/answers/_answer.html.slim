@@ -1,12 +1,15 @@
 li.answer id="answer_#{answer.id}"
   div= answer.body
+  = render 'shared/files', resource: answer
+
   -if current_user&.author_of?(answer.question) && !answer.best?
     p = link_to 'Select as best', best_answer_path(answer), method: :post, remote: true
   - if current_user&.author_of?(answer)
     = link_to 'Delete answer', answer, remote: true, method: :delete
     = link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
-    p.answer-errors
+    p.answer-edit-errors
     = form_with class: 'hidden', html: { id: "edit-answer-#{answer.id}" }, model: answer do |f|
       = f.label :body, "Your answer"
       = f.text_area :body
+      = render partial: "files/multiple_file_field", locals: { f: f }
       = f.submit 'Save'

@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Answer, type: :model do
+  include_examples 'many attached files', Question
+
   describe 'relations' do
     it { should belong_to :question }
     it { should belong_to :user }
@@ -17,7 +19,6 @@ RSpec.describe Answer, type: :model do
     it "applies a default scope to collections by best descending" do
       expect(Answer.all).to eq Answer.all.order(best: :desc)
     end
-
   end
 
   describe 'best!' do
