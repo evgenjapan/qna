@@ -25,10 +25,13 @@ RSpec.describe FilesController, type: :controller do
       end
 
       context 'not resource owner' do
-        let!(:resource) { create(:question, user: create(:user), files: [file]) }
+        let!(:resource) { create(:question, files: [file]) }
 
         it 'can not remove attachment' do
-          expect { delete :destroy, params: { id: resource.files.first }, format: :js }.to_not change(resource.files, :count)
+          expect do
+            delete :destroy, params: { id: resource.files.first }, format: :js
+            to_not change(resource.files, :count)
+          end
         end
 
         it 'renders destroy view' do

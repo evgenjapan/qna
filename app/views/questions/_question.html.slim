@@ -14,7 +14,6 @@ p.question-body= question.body
       = f.label :body, "Your question"
       = f.text_area :body
     p
-      = f.label :files
-      = f.file_field :files, multiple: true, direct_upload: true
+      = render partial: "files/multiple_file_field", locals: { f: f }
     p
       = f.submit 'Save'

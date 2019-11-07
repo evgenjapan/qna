@@ -11,6 +11,5 @@ li.answer id="answer_#{answer.id}"
     = form_with class: 'hidden', html: { id: "edit-answer-#{answer.id}" }, model: answer do |f|
       = f.label :body, "Your answer"
       = f.text_area :body
-      = f.label :files
-      = f.file_field :files, multiple: true, direct_upload: true
+      = render partial: "files/multiple_file_field", locals: { f: f }
       = f.submit 'Save'
